@@ -37,7 +37,7 @@ client.on("guildMemberAdd", async (user) => {
             ids[id].count++;
             ids[id].date = new Date().valueOf();
             await user.kick("raid account");
-            await user.kick(`Raid account: let in after ${JOIN_COUNT - ids[id].count}`);
+            console.log(`Raid account: let in after ${JOIN_COUNT - ids[id].count}`);
         } else {
             // let them stay, no need to track them
             delete ids[id];
