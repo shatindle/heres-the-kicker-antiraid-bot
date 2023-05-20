@@ -28,7 +28,7 @@ client.on("guildMemberAdd", async (user) => {
             ids[id] = {
                 date: new Date().valueOf(),
                 // users older accounts can be trusted more
-                count: accountAge > MONTHS_AGO ? 0 : JOIN_COUNT - 1
+                count: accountAge > MONTHS_AGO ? 0 : JOIN_COUNT
             };
             await user.kick(`Raid account: let in after ${JOIN_COUNT - ids[id].count}`);
             console.log(`First Kick: ${id}`);
