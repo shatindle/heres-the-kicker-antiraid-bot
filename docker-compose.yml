@@ -4,8 +4,7 @@ networks:
   default:
 
 services:
-  app:
-  backup-svc:
+  heres-the-kicker:
     build: .
     restart: unless-stopped
     networks:
