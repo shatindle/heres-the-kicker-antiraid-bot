@@ -17,30 +17,35 @@ const MONTHS_LIMIT = 1000 * 60 * 60 * 24 * 30 * 8;
 
 client.on("guildMemberAdd", async (user) => {
     let id = user.id;
+    let guildId = user.guild.id;
 
     try {
         const accountAge = user.user.createdAt.valueOf();
         const AGES_AGO = new Date(new Date().getTime() - (MONTHS_LIMIT * 2)).valueOf();
         const MONTHS_AGO = new Date(new Date().getTime() - MONTHS_LIMIT).valueOf();
+
+        // make sure this guild exists on our set
+        if (!ids[guildId]) ids[guildId] = {};
+
         // check if they rejoined
-        if (!ids[id] && accountAge > AGES_AGO) {
+        if (!ids[guildId][id] && accountAge > AGES_AGO) {
             // kick and record
-            ids[id] = {
+            ids[guildId][id] = {
                 date: new Date().valueOf(),
                 // users older accounts can be trusted more
                 count: accountAge > MONTHS_AGO ? 0 : JOIN_COUNT
             };
-            await user.kick(`Raid account: let in after ${JOIN_COUNT - ids[id].count}`);
+            await user.kick(`Raid account: let in after ${JOIN_COUNT - ids[guildId][id].count}`);
             console.log(`First Kick: ${id}`);
-        } else if (ids[id].count < JOIN_COUNT) {
+        } else if (ids[guildId][id] && ids[guildId][id].count < JOIN_COUNT) {
             // kick and record
-            ids[id].count++;
-            ids[id].date = new Date().valueOf();
+            ids[guildId][id].count++;
+            ids[guildId][id].date = new Date().valueOf();
             await user.kick("raid account");
-            console.log(`Raid account: let in after ${JOIN_COUNT - ids[id].count}`);
-        } else {
+            console.log(`Raid account: let in after ${JOIN_COUNT - ids[guildId][id].count}`);
+        } else if (ids[guildId][id]) {
             // let them stay, no need to track them
-            delete ids[id];
+            delete ids[guildId][id];
             console.log(`Allow: ${id}`);
         }
     } catch (err) {
@@ -52,11 +57,13 @@ client.on("guildMemberAdd", async (user) => {
 setInterval(function() {
     try {
         const HOURS_AGO = new Date(new Date().getTime() - HOURS_LIMIT).valueOf();
-        Object.keys(ids).forEach(id => {
-            if (ids[id].date < HOURS_AGO) {
-                delete ids[id];
-                console.log(`Stale: ${id}`);
-            }
+        Object.keys(ids).forEach(guildId => {
+            Object.keys(ids[guildId]).forEach(id => {
+                if (ids[guildId][id].date < HOURS_AGO) {
+                    delete ids[guildId][id];
+                    console.log(`Stale: ${id}`);
+                }
+            })
         });
     } catch (err) {
         console.log(`Unable to clear stale objects: ${err.message}`);
