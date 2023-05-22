@@ -5,6 +5,7 @@
 Create a .env file with the following keys:
 - TOKEN = your discord bot token
 - JOIN_COUNT = how harsh to be on new accounts
+- LOG_TO = the channel ID to record kicks or allows
 
 ## How it works
 

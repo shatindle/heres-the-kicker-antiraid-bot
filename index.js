@@ -38,19 +38,19 @@ client.on("guildMemberAdd", async (user) => {
                 count: accountAge > MONTHS_AGO ? 0 : JOIN_COUNT
             };
             await user.kick(`Raid account: let in after ${JOIN_COUNT - ids[guildId][id].count}`);
-            await client.channels.cache.get(LOG_TO).send(`Remaining kicks ${accountAge > MONTHS_AGO ? 0 : JOIN_COUNT}: ${id}`);
+            if (LOG_TO) await client.channels.cache.get(LOG_TO).send(`Remaining kicks ${accountAge > MONTHS_AGO ? 0 : JOIN_COUNT}: ${id}`);
         } else if (ids[guildId][id] && ids[guildId][id].count < JOIN_COUNT) {
             // kick and record
             ids[guildId][id].count++;
             ids[guildId][id].date = new Date().valueOf();
             await user.kick("raid account");
-            await client.channels.cache.get(LOG_TO).send(`Remaining kicks ${JOIN_COUNT - ids[guildId][id].count}: ${id}`);
+            if (LOG_TO) await client.channels.cache.get(LOG_TO).send(`Remaining kicks ${JOIN_COUNT - ids[guildId][id].count}: ${id}`);
         } else if (ids[guildId][id]) {
             // let them stay, no need to track them
             delete ids[guildId][id];
-            await client.channels.cache.get(LOG_TO).send(`Allow: ${id}`);
+            if (LOG_TO) await client.channels.cache.get(LOG_TO).send(`Allow: ${id}`);
         } else {
-            await client.channels.cache.get(LOG_TO).send(`Old account: ${id}`);
+            if (LOG_TO) await client.channels.cache.get(LOG_TO).send(`Old account: ${id}`);
         }
     } catch (err) {
         console.log(`${id}: ${err.message}`);
