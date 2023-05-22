@@ -49,6 +49,8 @@ client.on("guildMemberAdd", async (user) => {
             // let them stay, no need to track them
             delete ids[guildId][id];
             await client.channels.cache.get(LOG_TO).send(`Allow: ${id}`);
+        } else {
+            await client.channels.cache.get(LOG_TO).send(`Old account: ${id}`);
         }
     } catch (err) {
         console.log(`${id}: ${err.message}`);
